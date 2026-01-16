@@ -6,6 +6,8 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "chromadb>=1.4.1",
+    "groq>=1.0.0",
     "pandas>=2.3.3",
+    "semantic-router>=0.1.12",
     "sentence-transformers>=5.2.0",
 ]
