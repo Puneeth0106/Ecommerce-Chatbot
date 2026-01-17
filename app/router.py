@@ -1,6 +1,11 @@
 from semantic_router import Route
 from semantic_router.routers import SemanticRouter
-from semantic_router.encoders import HuggingFaceEncoder
+from semantic_router.encoders import OpenAIEncoder, HuggingFaceEncoder
+from semantic_router.index import QdrantIndex
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 #Define Routes
 faq= Route(
@@ -28,11 +33,16 @@ sql= Route(
 routes= [faq,sql]
 
 #Define Encoder
+encoder2= OpenAIEncoder()
+
 encoder = HuggingFaceEncoder(
     name="sentence-transformers/all-MiniLM-L6-v2")
 
+
+index = QdrantIndex(location=":memory:")
+
 #Define routing layer
-rl= SemanticRouter(encoder=encoder,routes=routes,auto_sync='local')
+router= SemanticRouter(encoder=encoder,routes=routes,index=index)
 
 if __name__ == "__main__":
     # Force the router to process the routes and prepare the vector index
@@ -41,8 +51,8 @@ if __name__ == "__main__":
     print("Testing Router...")
     
     # Now the index is ready for queries
-    res1 = rl("can i pay by cash")
+    res1 = router("What is the policy on defected products?")
     print(f"Query 1 matched: {res1.name}")
     
-    res2 = rl("what is the price of formal shoes with size 10")
+    res2 = router("what is the price of formal shoes with size 10")
     print(f"Query 2 matched: {res2.name}")
