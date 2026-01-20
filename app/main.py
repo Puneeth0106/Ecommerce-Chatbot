@@ -2,6 +2,7 @@ import streamlit as st
 from router import router
 from faq import ingest_faq_data, faq_chain
 from pathlib import Path
+from sql import sql_chain
 
 
 file_path= Path(__file__).parent/"resources/faq_data.csv"
@@ -16,6 +17,8 @@ def ask_query(query):
     route= router(query).name
     if route == 'faq':
         return faq_chain(query)
+    elif route == 'sql':
+        return sql_chain(query)
     else:
         return f'Route {route} not mentioned'
 

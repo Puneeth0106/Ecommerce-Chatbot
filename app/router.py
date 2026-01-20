@@ -1,11 +1,11 @@
 from semantic_router import Route
 from semantic_router.routers import SemanticRouter
 from semantic_router.encoders import OpenAIEncoder, HuggingFaceEncoder
-from semantic_router.index import QdrantIndex
+# from semantic_router.index import QdrantIndex
 from dotenv import load_dotenv
 
 
-load_dotenv()
+# load_dotenv()
 
 #Define Routes
 faq= Route(
@@ -39,10 +39,10 @@ encoder = HuggingFaceEncoder(
     name="sentence-transformers/all-MiniLM-L6-v2")
 
 
-index = QdrantIndex(location=":memory:")
+# index = QdrantIndex(location=":memory:")
 
 #Define routing layer
-router= SemanticRouter(encoder=encoder,routes=routes,index=index)
+router= SemanticRouter(encoder=encoder,routes=routes,auto_sync='local')
 
 if __name__ == "__main__":
     # Force the router to process the routes and prepare the vector index
