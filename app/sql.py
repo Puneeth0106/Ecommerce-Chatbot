@@ -67,33 +67,38 @@ def generate_sql_query(prompt, query):
 
 
 def sql_chain(question):
-    sql_query= generate_sql_query(sql_prompt, question)
-    if sql_query is None:
-        return "Could not generate SQL query"
-    if fetch_data(sql_query) is None:
-        return "No data found for the query"
-    context= fetch_data(sql_query).to_dict(orient='records')
-    response= comprehension_chain(question, context)
-    return response
+    try:
+        sql_query = generate_sql_query(sql_prompt, question)
+        df = fetch_data(sql_query)
+        
+        if df is None or df.empty:
+            yield "I couldn't find any products matching your request."
+            
+        # Truncate to save tokens
+        context = df.head().to_dict(orient='records')
+        yield from comprehension_chain(question, context)
+    except Exception as e:
+        yield f"An error occurred: {str(e)}"
 
 
 def comprehension_chain(question, data):
-    chat_completion = client.chat.completions.create(
-    messages=[
-        {
-            "role": "system",
-            "content": comprehension_prompt,
-        },
-        {
-            "role": "user",
-            "content": f"Question: {question}\nData: {data}",
-        }
-    ],
-    model=os.getenv("GROQ_MODEL"),
-    temperature=0.2,
-    max_tokens=1024
+    # Converting dict to a cleaner string format saves tokens compared to raw JSON
+    data_str = "\n".join([str(row) for row in data])
+    
+    stream = client.chat.completions.create(
+        messages=[
+            {"role": "system", "content": comprehension_prompt},
+            {"role": "user", "content": f"Question: {question}\nData: {data_str}"}
+        ],
+        model=os.getenv("GROQ_MODEL"),
+        temperature=0.2,
+        # max_tokens can be higher if the response is a long list
+        max_tokens=2048,
+        stream=True 
     )
-    return chat_completion.choices[0].message.content
+    for chunk in stream:
+        if chunk.choices[0].delta.content is not None:
+            yield chunk.choices[0].delta.content
 
 
 
@@ -111,6 +116,7 @@ def fetch_data(query):
 
 if __name__ == "__main__":
     query= "Do you have nike shoes with 50 percent discount?"
+
 
     print("Generating Results for query:", query)
     result= sql_chain(query)

@@ -14,7 +14,7 @@ small_talk_prompt= """You are a friendly and engaging conversational agent desig
     Above all, your mission is to be a delightful conversational companion that users look forward to chatting with."""
 
 def talk(query):
-    chat_completion= client.chat.completions.create(
+    stream= client.chat.completions.create(
         messages=[
             {
                 "role": "system",
@@ -26,8 +26,11 @@ def talk(query):
             }
         ],
         model=os.getenv("GROQ_MODEL"),
+        stream= True
     )
-    return chat_completion.choices[0].message.content
+    for chunk in stream:
+        if chunk.choices[0].delta.content is not None:
+            yield chunk.choices[0].delta.content
 
 
 if __name__ == "__main__":

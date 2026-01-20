@@ -3,6 +3,7 @@ from router import router
 from faq import ingest_faq_data, faq_chain
 from pathlib import Path
 from sql import sql_chain
+from small_talk import talk
 
 
 file_path= Path(__file__).parent/"resources/faq_data.csv"
@@ -19,6 +20,8 @@ def ask_query(query):
         return faq_chain(query)
     elif route == 'sql':
         return sql_chain(query)
+    elif route == 'small_talk':
+        return talk(query)
     else:
         return f'Route {route} not mentioned'
 
@@ -36,8 +39,8 @@ if query:
     with st.chat_message("user"):
         st.markdown(query)
     st.session_state.messages.append({'role':'user','content':query})
-    response= ask_query(query)
 
     with st.chat_message("assistant"):
-        st.markdown(response)
-    st.session_state.messages.append({'role':'assistant','content':response})
+        response_generator = ask_query(query)
+        full_response=st.write_stream(response_generator)
+    st.session_state.messages.append({'role':'assistant','content':full_response})

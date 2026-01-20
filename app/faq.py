@@ -63,15 +63,17 @@ def generate_answer(query, context):
             answer the query using the context only. Do not go out of context,
             if dont know say you dont know 
             """
-    chat_completion= groq_client.chat.completions.create(
+    stream= groq_client.chat.completions.create(
         messages=[{
             'role':'user',
             'content':prompt
         }],
-        model=os.environ.get("GROQ_MODEL")
+        model=os.environ.get("GROQ_MODEL"),
+        stream= True
     )
-    response= chat_completion.choices[0].message.content
-    return response
+    for chunk in stream:
+        if chunk.choices[0].delta.content is not None:
+            yield chunk.choices[0].delta.content
 
 
 

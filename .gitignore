@@ -1,3 +1,8 @@
 learnings/*
 .env
 app/__pycache__/
+app/testing.py
+web-scrapping/duplicate_products.csv
+web-scrapping/flipkart_product_data.csv
+web-scrapping/flipkart_product_links.csv
+web-scrapping/unavailable_products.csv
