@@ -2,6 +2,8 @@
 
 An intelligent conversational AI chatbot for e-commerce platforms, built with **Streamlit** and powered by **Groq LLM**. The chatbot routes user queries to specialized handlers using semantic routing and provides accurate responses for product searches, FAQs, and general conversation.
 
+![System Workflow](images/workflow.png)
+
 ---
 
 ## Key Achievements
@@ -52,13 +54,13 @@ The chatbot automatically classifies user queries into three categories:
 
 ---
 
-## Screenshots
-
 ### Frontend Interface
 ![Chatbot Frontend](images/frontend.png)
 
+![Q&A Semantic Routing](images/qa.png) 
+
 ### Workflow Overview
-![System Workflow](images/workflow.png)
+
 
 ---
 
@@ -66,8 +68,6 @@ The chatbot automatically classifies user queries into three categories:
 
 **Semantic Router**  
 Intent classification engine that distinguishes between FAQ, SQL, and small talk queries using embedding similarity and pattern matching.
-
-![Q&A Semantic Routing](images/qa.png)
 
 **FAQ Chain**
 - Vector database (ChromaDB) storing policy documents and Q&A pairs
