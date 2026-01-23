@@ -1,6 +1,8 @@
 # E-commerce Chatbot
 
-An intelligent conversational AI chatbot for e-commerce platforms, built with Streamlit and powered by Groq LLM. The chatbot intelligently routes user queries to specialized handlers using semantic routing and provides accurate responses for product searches, FAQs, and general conversation.
+An intelligent conversational AI chatbot for e-commerce platforms, built with **Streamlit** and powered by **Groq LLM**. The chatbot routes user queries to specialized handlers using semantic routing and provides accurate responses for product searches, FAQs, and general conversation.
+
+---
 
 ## Key Achievements
 
@@ -11,93 +13,141 @@ An intelligent conversational AI chatbot for e-commerce platforms, built with St
 - Sub-2 second response time for complex multi-table queries
 - Multi-intent understanding without explicit user commands
 
+---
+
 ## Features
 
 ### Intelligent Query Routing
-- **Semantic Router**: Automatically classifies user queries into three categories:
-  - **FAQ**: General questions about policies, payments, returns, and tracking
-  - **SQL**: Product search and database queries
-  - **Small Talk**: Casual conversation and greetings
+
+The chatbot automatically classifies user queries into three categories:
+
+| Category | Description | Example |
+|----------|-------------|---------|
+| FAQ | General questions about policies, payments, returns, and tracking | "What is your return policy?" |
+| SQL | Product search and database queries | "Show me Nike shoes under Rs 3000" |
+| Small Talk | Casual conversation and greetings | "How are you today?" |
 
 ### Multi-Modal Interaction
 
-1. **FAQ Handler**
-   - Vector-based semantic search using ChromaDB
-   - Sentence Transformer embeddings for accurate matching
-   - Retrieves relevant answers from FAQ database
-   - Context-aware responses using Groq LLM
+#### FAQ Handler
+![FAQ Chain](images/faq-chain.png)
 
-2. **SQL Query Handler**
-   - Natural language to SQL conversion
-   - Product database queries (shoes/footwear products)
-   - Filters by brand, price, discount, ratings
-   - Formatted product listings with links
+- Vector-based semantic search using ChromaDB
+- Sentence Transformer embeddings for accurate matching
+- Retrieves relevant answers from the FAQ database
+- Context-aware responses using Groq LLM
 
-3. **Small Talk Handler**
-   - Friendly conversational responses
-   - Engaging and empathetic interactions
-   - Maintains warm, personable tone
+#### SQL Query Handler
+![SQL Chain](images/sql-chain.png)
 
-## Technical Architecture
+- Natural language to SQL conversion
+- Product database queries (shoes/footwear products)
+- Filters by brand, price, discount, and ratings
+- Formatted product listings with links
 
-### Core Components
+#### Small Talk Handler
+- Friendly conversational responses
+- Engaging and empathetic interactions
+- Maintains a warm, personable tone
 
-**Semantic Router**: Intent classification engine that distinguishes between FAQ, SQL, and small talk queries using embedding similarity and pattern matching.
+---
 
-**FAQ Chain**:
+## Screenshots
+
+### Frontend Interface
+![Chatbot Frontend](images/frontend.png)
+
+### Workflow Overview
+![System Workflow](images/workflow.png)
+
+---
+
+## Core Components
+
+**Semantic Router**  
+Intent classification engine that distinguishes between FAQ, SQL, and small talk queries using embedding similarity and pattern matching.
+
+![Q&A Semantic Routing](images/qa.png)
+
+**FAQ Chain**
 - Vector database (ChromaDB) storing policy documents and Q&A pairs
 - Similarity-based retrieval with contextual answer generation
 - Sentence Transformer embeddings for accurate semantic matching
 - Handles queries like "What are your return policies?" or "Do you accept online payments?"
 
-**SQL Chain**:
+**SQL Chain**
 - Natural language to SQL query generation using Groq LLM
 - SQLite database with scraped e-commerce product data
 - Structured product information retrieval with price, brand, and category filtering
-- Handles queries like "Show me Nike shoes under ₹3000" or "Find products with 30% discount"
+- Handles queries like "Show me Nike shoes under Rs 3000" or "Find products with 30 percent discount"
 
-**Small Talk Handler**:
+**Small Talk Handler**
 - Friendly conversational responses for casual interactions
-- Maintains warm, empathetic tone for user engagement
+- Maintains a warm, empathetic tone for user engagement
 
-### Technology Stack
+---
 
-| Component | Technology |
-|-----------|-----------|
-| **LLM** | LLaMA (via GROQ API) - Sub-millisecond inference |
-| **Vector DB** | ChromaDB with Sentence Transformer embeddings |
-| **Relational DB** | SQLite for structured product data |
-| **Web Framework** | Streamlit for interactive UI |
-| **Routing** | Semantic Router with embedding-based classification |
-| **Data Source** | Web-scraped product catalogs |
+## Technology Stack
 
-### Data Pipeline
+| Component | Technology | Purpose |
+|-----------|-----------|---------|
+| LLM | LLaMA (via GROQ API) | Low-latency inference for fast responses |
+| Vector DB | ChromaDB + Sentence Transformers | Semantic similarity search |
+| Relational DB | SQLite | Structured product data storage |
+| Web Framework | Streamlit | Interactive UI and deployment |
+| Routing | Semantic Router | Embedding-based query classification |
+| Data Source | Web Scraping | E-commerce product catalogs |
 
-1. **Web Scraping**: Automated product data extraction from e-commerce platforms
-2. **Data Processing**: Cleaning, normalization, and validation
-3. **Database Population**: SQLite database creation with optimized indexing
-4. **Vector Indexing**: Policy documents embedded and stored in ChromaDB
-5. **Query Processing**: Real-time intent classification and response generation
+---
+
+## Data Pipeline
+
+```
+Web Scraping
+    -> Data Processing (Clean and Normalize)
+    -> Database Population (SQLite)
+    -> Vector Indexing (ChromaDB)
+    -> Query Processing and Response Generation
+```
+
+**Steps:**
+1. Web Scraping - Automated product data extraction from e-commerce platforms
+2. Data Processing - Cleaning, normalization, and validation
+3. Database Population - SQLite database creation with optimized indexing
+4. Vector Indexing - Policy documents embedded and stored in ChromaDB
+5. Query Processing - Real-time intent classification and response generation
+
+---
 
 ## Project Structure
 
 ```
 .
-├── app/
-│   ├── main.py              # Streamlit application entry point
-│   ├── router.py            # Semantic routing logic
-│   ├── faq.py               # FAQ handling with ChromaDB
-│   ├── sql.py               # SQL query generation and execution
-│   ├── small_talk.py        # Casual conversation handler
+├── main.py                              # Main entry point
+├── pyproject.toml                       # Project dependencies
+├── README.md                            # Project documentation
+│
+├── app/                                 # Main application
+│   ├── main.py                          # Streamlit UI
+│   ├── router.py                        # Semantic routing logic
+│   ├── faq.py                           # FAQ handler
+│   ├── sql.py                           # SQL handler
+│   ├── small_talk.py                    # Conversation handler
 │   └── resources/
-│       └── faq_data.csv     # FAQ questions and answers
-├── web-scrapping/
-│   ├── flipkart_data_extraction.ipynb  # Data collection notebook
-│   ├── csv_to_sqlite.py                # Database creation script
-│   └── ecommerce_data_final.csv        # Product dataset
-├── pyproject.toml           # Project dependencies
-└── README.md
+│       └── faq_data.csv                 # FAQ database
+│
+├── web-scrapping/                       # Data collection
+│   ├── flipkart_data_extraction.ipynb   # Web scraping notebook
+│   ├── csv_to_sqlite.py                 # Database creation
+│   └── ecommerce_data_final.csv         # Product dataset
+│
+└── learnings/                           # Research and experiments
+    ├── chroma_learning.py
+    ├── groq_learning.py
+    └── semantic_router_learning.py
 ```
+
+---
 
 ## Getting Started
 
